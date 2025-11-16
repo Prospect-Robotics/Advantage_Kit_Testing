@@ -88,8 +88,8 @@ public class TunerConstants {
     private static final int kPigeonId = 13;
 
     // These are only used for simulation
-    private static final MomentOfInertia kSteerInertia = KilogramSquareMeters.of(0.01);
-    private static final MomentOfInertia kDriveInertia = KilogramSquareMeters.of(0.01);
+    private static final MomentOfInertia kSteerInertia = KilogramSquareMeters.of(0.004); // Was 0.01, see https://docs.advantagekit.org/getting-started/template-projects/talonfx-swerve-template/
+    private static final MomentOfInertia kDriveInertia = KilogramSquareMeters.of(0.025); // Was 0.01
     // Simulated voltage necessary to overcome friction
     private static final Voltage kSteerFrictionVoltage = Volts.of(0.2);
     private static final Voltage kDriveFrictionVoltage = Volts.of(0.2);
