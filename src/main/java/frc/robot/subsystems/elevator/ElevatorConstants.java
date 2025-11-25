@@ -23,11 +23,11 @@ public class ElevatorConstants {
     public static final Distance ELEVATOR_MIN_HEIGHT = Inches.of(0.0);
     public static final Distance ELEVATOR_MAX_HEIGHT = Inches.of(56.0);
 
-//  public static final double kG = 0.29; // 0.3
-//  public static final double kS = 0.11; // 0
-//  public static final double kV = 0.1; // 0
-//  public static final double kA = 0.0; // 0
-     public static final double kP = 0.4; // 0.4
-     public static final double kI = 0.0; // 0
-     public static final double kD = 0.0; // 0
+    //  public static final double kG = 0.29; // 0.3
+    //  public static final double kS = 0.11; // 0
+    //  public static final double kV = 0.1; // 0
+    //  public static final double kA = 0.0; // 0
+    public static final double kP = 0.4; // 0.4
+    public static final double kI = 0.0; // 0
+    public static final double kD = 0.0; // 0
 }
