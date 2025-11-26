@@ -1,8 +1,10 @@
 package frc.robot.subsystems.elevator;
 
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -39,5 +41,13 @@ public interface ElevatorIO {
      */
     default Angle getMotorPosition() {
         return Rotations.of(0);
+    }
+
+    /**
+     * Needs to be calculated based off of the motor rotational position, gearing, and spool radius,
+     * @return The position of the elevator's carriage.
+     */
+    default Distance getCarriagePosition() {
+        return Meters.of(0);
     }
 }

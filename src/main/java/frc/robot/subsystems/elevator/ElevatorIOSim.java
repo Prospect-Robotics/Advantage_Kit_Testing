@@ -2,14 +2,18 @@ package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.Constants;
@@ -25,7 +29,7 @@ public class ElevatorIOSim implements ElevatorIO {
             ElevatorConstants.ELEVATOR_MIN_HEIGHT.in(Meter),
             ElevatorConstants.ELEVATOR_MAX_HEIGHT.in(Meter),
             true,
-            0.01);
+            0.00);
 
     TalonFX motor;
     TalonFXSimState simMotor;
@@ -35,6 +39,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
     public ElevatorIOSim() {
         motor = new TalonFX(Constants.ELEVATOR_ID);
+        motor.setNeutralMode(NeutralModeValue.Brake);
 
         simMotor = motor.getSimState();
 
@@ -44,6 +49,7 @@ public class ElevatorIOSim implements ElevatorIO {
                 .withKP(ElevatorConstants.kP)
                 .withKI(ElevatorConstants.kI)
                 .withKD(ElevatorConstants.kD));
+        motorConfig.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
 
         motor.getConfigurator().apply(motorConfig);
     }
@@ -94,6 +100,11 @@ public class ElevatorIOSim implements ElevatorIO {
     @Override
     public Angle getMotorPosition() {
         return motor.getPosition().getValue();
+    }
+
+    @Override
+    public Distance getCarriagePosition() {
+        return Meters.of(elevatorSim.getPositionMeters());
     }
 
     /**
