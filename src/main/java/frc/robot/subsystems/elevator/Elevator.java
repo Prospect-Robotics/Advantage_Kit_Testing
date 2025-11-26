@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.ElevatorArmVisualizer;
 import org.littletonrobotics.junction.Logger;
@@ -35,17 +37,18 @@ public class Elevator extends SubsystemBase {
         ElevatorArmVisualizer.getInstance().updateElevatorHeight(io.getCarriagePosition());
     }
 
-    public void lowerElevator() {
-        io.setMotorSetpoint(ElevatorHeight.DOWN.getPositionAngle());
+    public void setElevatorPosition(ElevatorHeight height) {
+        io.setMotorSetpoint(height.getPositionAngle());
     }
 
-    public void raiseElevator() {
-        io.setMotorSetpoint(ElevatorHeight.UP.getPositionAngle());
+    public Command setElevatorPositionCommand(ElevatorHeight height) {
+        return new InstantCommand(() -> setElevatorPosition(height));
     }
 
-    enum ElevatorHeight {
+    public enum ElevatorHeight {
         // Positions taken from offseason bot code, inturn taken from onshape.
         UP(Inches.of(56.0)),
+        MIDDLE(Inches.of(28)),
         DOWN(Inches.of(0.0));
 
         public final Distance position;
