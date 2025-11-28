@@ -115,9 +115,10 @@ public class RobotContainer {
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        // Default command, normal field-relative drive
+        // Default command, normal field-relative drive.
+        // Xbox controller that I got is busted or something, the getRightY() binds to a trigger for some reason.
         drive.setDefaultCommand(DriveCommands.joystickDrive(
-                drive, () -> -controller.getLeftY(), () -> -controller.getLeftX(), () -> -controller.getRightX()));
+                drive, () -> -controller.getLeftY(), () -> -controller.getLeftX(), () -> -controller.getRawAxis(3)));
 
         // Lock to 0° when A button is held
         controller
