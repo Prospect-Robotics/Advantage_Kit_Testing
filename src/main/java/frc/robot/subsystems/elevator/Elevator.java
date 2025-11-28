@@ -7,7 +7,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.ElevatorArmVisualizer;
+import frc.robot.subsystems.SimulationVisualizer;
 import org.littletonrobotics.junction.Logger;
 
 /**
@@ -34,7 +34,7 @@ public class Elevator extends SubsystemBase {
         // Must be called every periodic after updating hardware state.
         Logger.processInputs("Elevator", replayedInputs);
 
-        ElevatorArmVisualizer.getInstance().updateElevatorHeight(io.getCarriagePosition());
+        SimulationVisualizer.getInstance().updateElevatorHeight(io.getCarriagePosition());
     }
 
     public void setElevatorPosition(ElevatorHeight height) {

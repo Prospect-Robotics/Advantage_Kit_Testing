@@ -13,20 +13,13 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.ElevatorArmVisualizer;
+import frc.robot.subsystems.SimulationVisualizer;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -118,26 +111,10 @@ public class Robot extends LoggedRobot {
         // This must be called from the robot's periodic block in order for anything in
         // the Command-based framework to work.
         CommandScheduler.getInstance().run();
-        ElevatorArmVisualizer.getInstance().periodic();
+        SimulationVisualizer.getInstance().periodic();
 
         // Return to non-RT thread priority (do not modify the first argument)
         // Threads.setCurrentThreadPriority(false, 10);
-
-        Logger.recordOutput("RobotPose", new Pose2d());
-        Logger.recordOutput("ZeroPositionComp", new Pose3d[] {new Pose3d()});
-        Logger.recordOutput("FinalPositionComp", new Pose3d[] {
-            new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0)),
-            new Pose3d(
-                    0,
-                    0,
-                    Inches.of(Math.abs(28 * Math.sin(Timer.getTimestamp()))).in(Meters),
-                    new Rotation3d(0, 0, 0)),
-            new Pose3d(
-                    0,
-                    0,
-                    Inches.of(Math.abs(56 * Math.sin(Timer.getTimestamp()))).in(Meters),
-                    new Rotation3d(0, 0, 0))
-        });
     }
 
     /** This function is called once when the robot is disabled. */
