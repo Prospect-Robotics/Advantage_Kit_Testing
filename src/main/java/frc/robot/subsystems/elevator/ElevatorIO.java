@@ -14,7 +14,7 @@ public interface ElevatorIO {
     class ElevatorIOInputs {
         public double carriagePositionInches = 0.0;
         public double motorRotations = 0.0;
-        public double motorSpeedRotsPerSecond = 0.0;
+        public double motorVelocityRotsPerSecond = 0.0;
         public double motorCurrent = 0.0;
         public double motorVoltage = 0.0;
     }
@@ -27,9 +27,9 @@ public interface ElevatorIO {
 
     /**
      * Uses positional control for the motor, using its internal PID values.
-     * @param position position for the motor to go to.
+     * @param setpoint Position for the motor to go to.
      */
-    default void setMotorSetpoint(Angle position) {}
+    default void setMotorSetpoint(Angle setpoint) {}
 
     /**
      * @param voltage Voltage to apply to the motor.

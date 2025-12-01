@@ -24,6 +24,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmIO;
+import frc.robot.subsystems.arm.ArmIOReal;
+import frc.robot.subsystems.arm.ArmIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -46,6 +50,7 @@ public class RobotContainer {
     // Subsystems
     private final Drive drive;
     private final Elevator elevator;
+    private final Arm arm;
 
     // Controller
     private final CommandXboxController controller = new CommandXboxController(0);
@@ -67,6 +72,8 @@ public class RobotContainer {
 
                 elevator = new Elevator(new ElevatorIOReal());
 
+                arm = new Arm(new ArmIOReal());
+
                 break;
 
             case SIM:
@@ -80,6 +87,8 @@ public class RobotContainer {
 
                 elevator = new Elevator(new ElevatorIOSim());
 
+                arm = new Arm(new ArmIOSim());
+
                 break;
 
             default:
@@ -88,6 +97,9 @@ public class RobotContainer {
                         new GyroIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
 
                 elevator = new Elevator(new ElevatorIO() {});
+
+                arm = new Arm(new ArmIO() {});
+
                 break;
         }
 
@@ -140,6 +152,11 @@ public class RobotContainer {
         controller.povUp().onTrue(elevator.setElevatorPositionCommand(Elevator.ElevatorHeight.UP));
         controller.povLeft().onTrue(elevator.setElevatorPositionCommand(Elevator.ElevatorHeight.MIDDLE));
         controller.povDown().onTrue(elevator.setElevatorPositionCommand(Elevator.ElevatorHeight.DOWN));
+
+        controller.y().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.NORTH));
+        controller.b().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.EAST));
+        controller.a().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.SOUTH));
+        controller.x().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.WEST));
     }
 
     /**

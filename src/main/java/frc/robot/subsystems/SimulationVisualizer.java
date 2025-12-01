@@ -1,10 +1,10 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
@@ -17,8 +17,12 @@ public class SimulationVisualizer {
 
     private static final SimulationVisualizer instance = new SimulationVisualizer();
 
+    // In mech 2d, the arm is rotated 90 degrees off of the actual subsystem.
+    private static final Angle ARM_OFFSET = Degrees.of(90);
+
     // Used for articulation of the 3d mechanism.
     private Distance elevatorHeight = Inches.of(0.0);
+    private Angle armAngle = Degrees.of(0);
 
     private SimulationVisualizer() {}
 
@@ -27,12 +31,16 @@ public class SimulationVisualizer {
     }
 
     // Where the elevator and arm will be "painted" to
-    LoggedMechanism2d elevatorArmMechanismCanvas = new LoggedMechanism2d(56, 84, new Color8Bit("#3b83bd"));
+    LoggedMechanism2d elevatorArmMechanismCanvas = new LoggedMechanism2d(56, 84, new Color8Bit("#4d226e"));
 
     // Sets up the elevator in the mechanism 2d sim
     LoggedMechanismRoot2d elevatorRoot = elevatorArmMechanismCanvas.getRoot("ElevatorRoot", 28, 0);
     LoggedMechanismLigament2d elevatorLigament =
             elevatorRoot.append(new LoggedMechanismLigament2d("Elevator", 56, 90, 5, new Color8Bit("#cf6c30")));
+
+    // Sets up the arm in the mechanism 2d sim
+    LoggedMechanismLigament2d armLigament =
+            elevatorLigament.append(new LoggedMechanismLigament2d("Arm", 23, 0, 3, new Color8Bit("#30cfaa")));
 
     public void periodic() {
         // Mechanism 2D for Elevator Arm
@@ -47,8 +55,15 @@ public class SimulationVisualizer {
         });
     }
 
+    // TODO: Do we need to get the length/angle of the Mech2d, or just set it to the input?
+
     public void updateElevatorHeight(Distance newHeight) {
         elevatorLigament.setLength(newHeight.in(Inches));
         elevatorHeight = Inches.of(elevatorLigament.getLength());
+    }
+
+    public void updateArmRotation(Angle newRotation) {
+        armLigament.setAngle(newRotation.minus(ARM_OFFSET).in(Degrees));
+        armAngle = Degrees.of(armLigament.getAngle());
     }
 }

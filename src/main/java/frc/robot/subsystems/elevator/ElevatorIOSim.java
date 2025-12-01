@@ -21,6 +21,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class ElevatorIOSim implements ElevatorIO {
 
+    // Physics sim for the elevator.
     private final ElevatorSim elevatorSim = new ElevatorSim(
             DCMotor.getKrakenX60(1),
             ElevatorConstants.MOTOR_TO_ELEVATOR_GEARING,
@@ -32,23 +33,24 @@ public class ElevatorIOSim implements ElevatorIO {
             0.00);
 
     TalonFX motor;
-    TalonFXSimState simMotor;
+    TalonFXSimState motorSim;
     TalonFXConfiguration motorConfig;
 
+    // Used for actually moving the motor to a given position with PID applied to a voltage input.
     PositionVoltage positionControl = new PositionVoltage(0);
 
     public ElevatorIOSim() {
         motor = new TalonFX(Constants.ELEVATOR_ID);
         motor.setNeutralMode(NeutralModeValue.Brake);
 
-        simMotor = motor.getSimState();
+        motorSim = motor.getSimState();
 
         motorConfig = new TalonFXConfiguration();
 
         motorConfig.withSlot0(new Slot0Configs()
-                .withKP(ElevatorConstants.kP)
-                .withKI(ElevatorConstants.kI)
-                .withKD(ElevatorConstants.kD));
+                .withKP(ElevatorConstants.ELEVATOR_kP)
+                .withKI(ElevatorConstants.ELEVATOR_kI)
+                .withKD(ElevatorConstants.ELEVATOR_kD));
         motorConfig.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
 
         motor.getConfigurator().apply(motorConfig);
@@ -63,24 +65,24 @@ public class ElevatorIOSim implements ElevatorIO {
         inputs.motorCurrent = motor.getStatorCurrent().getValueAsDouble();
         inputs.motorRotations = motor.getPosition().getValueAsDouble();
         inputs.motorVoltage = motor.getMotorVoltage().getValueAsDouble();
-        inputs.motorSpeedRotsPerSecond = motor.getVelocity().getValueAsDouble();
+        inputs.motorVelocityRotsPerSecond = motor.getVelocity().getValueAsDouble();
     }
 
-    public void updateSim() {
-        simMotor.setSupplyVoltage(Volts.of(12));
+    private void updateSim() {
+        motorSim.setSupplyVoltage(Volts.of(12));
 
         // Apply the voltage to the sim elevator that we apply to the sim motor.
-        elevatorSim.setInputVoltage(simMotor.getMotorVoltage());
+        elevatorSim.setInputVoltage(motorSim.getMotorVoltage());
 
         // Logs to "Real Outputs" NT
-        Logger.recordOutput("Simulated Elevator/simMotor/Voltage", simMotor.getMotorVoltage());
+        Logger.recordOutput("Simulated Elevator/motorSim/Voltage", motorSim.getMotorVoltage());
 
         elevatorSim.update(0.02); // Same update cycle as an actual robot, 20 ms.
 
-        simMotor.setRawRotorPosition(getMotorRotations(elevatorSim.getPositionMeters()));
+        motorSim.setRawRotorPosition(getMotorRotations(elevatorSim.getPositionMeters()));
 
         // angular velocity = linear velocity / radius, taken also from 5414
-        simMotor.setRotorVelocity(
+        motorSim.setRotorVelocity(
                 ((elevatorSim.getVelocityMetersPerSecond() / ElevatorConstants.ELEVATOR_SPOOL_RADIUS.in(Meters))
                                 // radians/sec to rotations/sec
                                 / (2.0 * Math.PI))
@@ -88,8 +90,8 @@ public class ElevatorIOSim implements ElevatorIO {
     }
 
     @Override
-    public void setMotorSetpoint(Angle position) {
-        motor.setControl(positionControl.withPosition(position));
+    public void setMotorSetpoint(Angle setpoint) {
+        motor.setControl(positionControl.withPosition(setpoint));
     }
 
     @Override
