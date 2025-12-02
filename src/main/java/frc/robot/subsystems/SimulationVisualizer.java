@@ -49,10 +49,30 @@ public class SimulationVisualizer {
 
         // Component Simulation for the 3D robot.
         Logger.recordOutput("Component Positions", new Pose3d[] {
+            // Elevator base.
             new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0)),
+
+            // Elevator 1st stage.
             new Pose3d(0, 0, elevatorHeight.times(.5).in(Meters), new Rotation3d(0, 0, 0)),
-            new Pose3d(0, 0, elevatorHeight.in(Meters), new Rotation3d(0, 0, 0))
+
+            // Elevator 2nd stage (carriage).
+            new Pose3d(0, 0, elevatorHeight.in(Meters), new Rotation3d(0, 0, 0)),
+
+            // Arm
+            new Pose3d(
+                    0,
+                    -0.125,
+                    elevatorHeight.plus(Meters.of(0.37)).in(Meters),
+                    new Rotation3d(0, armAngle.in(Radians), 0))
         });
+
+        // Used for testing new components models added to the robot.
+        //        Logger.recordOutput("Zeroed Positions", new Pose3d[] {
+        //            new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0)),
+        //            new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0)),
+        //            new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0)),
+        //            new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0))
+        //        });
     }
 
     // TODO: Do we need to get the length/angle of the Mech2d, or just set it to the input?
