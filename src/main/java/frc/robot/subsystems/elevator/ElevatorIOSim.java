@@ -37,7 +37,7 @@ public class ElevatorIOSim implements ElevatorIO {
     private TalonFXConfiguration motorConfig;
 
     // Used for actually moving the motor to a given position with PID applied to a voltage input.
-    PositionVoltage positionControl = new PositionVoltage(0);
+    private final PositionVoltage positionControl = new PositionVoltage(0);
 
     public ElevatorIOSim() {
         motor = new TalonFX(Constants.ELEVATOR_ID);
@@ -51,6 +51,8 @@ public class ElevatorIOSim implements ElevatorIO {
                 .withKP(ElevatorConstants.ELEVATOR_kP)
                 .withKI(ElevatorConstants.ELEVATOR_kI)
                 .withKD(ElevatorConstants.ELEVATOR_kD));
+
+        // This needs to be CounterClockwise, else sim won't work propper, though it is clockwise on the bot.
         motorConfig.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
 
         motor.getConfigurator().apply(motorConfig);
