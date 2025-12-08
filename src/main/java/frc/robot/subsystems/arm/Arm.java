@@ -32,6 +32,7 @@ public class Arm extends SubsystemBase {
     }
 
     public void setArmPosition(ArmPositions armPosition) {
+        // WARNING: Make sure you use getMotorPosition() not getArmPosition()!
         io.setPivotMotorSetpoint(armPosition.getMotorPosition());
     }
 
@@ -69,10 +70,16 @@ public class Arm extends SubsystemBase {
             this.position = position;
         }
 
+        /**
+         * @return The position of the arm.
+         */
         public Angle getArmPosition() {
             return position;
         }
 
+        /**
+         * @return The position the motor should go to in order to achieve the above armPosition.
+         */
         public Angle getMotorPosition() {
             return position.times(MOTOR_TO_ARM_GEARING);
         }

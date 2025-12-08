@@ -7,7 +7,6 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -42,8 +41,6 @@ public class ArmIOSim implements ArmIO {
     TalonFX intakeMotor;
     TalonFXSimState intakeMotorSimState;
     TalonFXConfiguration intakeMotorConfig;
-
-    VoltageOut intakeVoltageControl = new VoltageOut(0);
 
     public ArmIOSim() {
         // Set up arm pivot motor.
@@ -117,12 +114,12 @@ public class ArmIOSim implements ArmIO {
 
     @Override
     public void setPivotMotorVoltage(Voltage voltage) {
-        pivotMotor.setVoltage(voltage.in(Volts));
+        pivotMotor.setVoltage(voltage.magnitude());
     }
 
     @Override
     public void setIntakeMotorVoltage(Voltage voltage) {
-        intakeMotor.setVoltage(voltage.in(Volts));
+        intakeMotor.setVoltage(voltage.magnitude());
     }
 
     @Override
