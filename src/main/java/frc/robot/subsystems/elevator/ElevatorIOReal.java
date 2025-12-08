@@ -43,7 +43,7 @@ public class ElevatorIOReal implements ElevatorIO {
     @Override
     public void updateState(ElevatorIOInputs inputs) {
         // TODO: This conversion code might be a major thorn later, or maybe its fine, and the sim code needs rework.
-        inputs.carriagePositionInches = motorRotationToCarriagePosition(motor.getPosition().getValue()).in(Inches);
+        inputs.carriagePositionInches = getCarriagePosition().in(Inches);
         inputs.motorRotations = motor.getPosition().getValueAsDouble();
         inputs.motorVelocityRotsPerSecond = motor.getVelocity().getValueAsDouble();
         inputs.motorCurrent = motor.getStatorCurrent().getValueAsDouble();
@@ -67,7 +67,7 @@ public class ElevatorIOReal implements ElevatorIO {
 
     @Override
     public Distance getCarriagePosition() {
-        return
+        return motorRotationToCarriagePosition(motor.getPosition().getValue());
     }
 
     private static Distance motorRotationToCarriagePosition(Angle motorPosition) {
