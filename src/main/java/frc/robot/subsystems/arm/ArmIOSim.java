@@ -46,28 +46,36 @@ public class ArmIOSim implements ArmIO {
     VoltageOut intakeVoltageControl = new VoltageOut(0);
 
     public ArmIOSim() {
+        // Set up arm pivot motor.
         pivotMotor = new TalonFX(Constants.ARM_PIVOT_ID);
-        intakeMotor = new TalonFX(Constants.ARM_INTAKE_ID);
-
         pivotMotorSimState = pivotMotor.getSimState();
-        intakeMotorSimState = intakeMotor.getSimState();
 
+        // Start motor config.
         pivotMotorConfig = new TalonFXConfiguration();
-        intakeMotorConfig = new TalonFXConfiguration();
 
+        // PID
         pivotMotorConfig.withSlot0(
                 new Slot0Configs().withKP(ARM_PIVOT_kP).withKI(ARM_PIVOT_kI).withKD(ARM_PIVOT_kD));
 
-        // Positive is arm moves clockwise
+        // Motor Rotation Direction - Positive: arm moves clockwise
         pivotMotorConfig.withMotorOutput(
                 new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
 
+        // End motor config.
         pivotMotor.getConfigurator().apply(pivotMotorConfig);
 
-        // Positive is intake, negative is outtake.
+        // Set up arm intake motor.
+        intakeMotor = new TalonFX(Constants.ARM_INTAKE_ID);
+        intakeMotorSimState = intakeMotor.getSimState();
+
+        // Start Motor Config
+        intakeMotorConfig = new TalonFXConfiguration();
+
+        // Motor Rotation Direction - Positive: intake. Negative: outtake.
         intakeMotorConfig.withMotorOutput(
                 new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
 
+        // End Motor Config
         intakeMotor.getConfigurator().apply(intakeMotorConfig);
     }
 
