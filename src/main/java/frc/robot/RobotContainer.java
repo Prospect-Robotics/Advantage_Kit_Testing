@@ -17,7 +17,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -50,7 +50,7 @@ public class RobotContainer {
     private final Arm arm;
 
     // Controller
-    private final CommandXboxController controller = new CommandXboxController(0);
+    private final CommandPS4Controller controller = new CommandPS4Controller(0);
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
@@ -127,7 +127,7 @@ public class RobotContainer {
         // Default command, normal field-relative drive.
         // Xbox controller that I got is busted or something, the getRightY() binds to a trigger for some reason.
         drive.setDefaultCommand(DriveCommands.joystickDrive(
-                drive, () -> -controller.getLeftY(), () -> -controller.getLeftX(), () -> -controller.getRawAxis(3)));
+                drive, () -> -controller.getLeftY(), () -> -controller.getLeftX(), () -> controller.getRightX()));
 
         // TODO: Enable later
         // Lock to 0° when A button is held
@@ -153,10 +153,15 @@ public class RobotContainer {
         controller.povLeft().onTrue(elevator.setElevatorPositionCommand(Elevator.ElevatorHeight.MIDDLE));
         controller.povDown().onTrue(elevator.setElevatorPositionCommand(Elevator.ElevatorHeight.DOWN));
 
-        controller.y().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.NORTH));
-        controller.b().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.EAST));
-        controller.a().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.SOUTH));
-        controller.x().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.WEST));
+        //        controller.y().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.NORTH));
+        //        controller.b().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.EAST));
+        //        controller.a().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.SOUTH));
+        //        controller.x().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.WEST));
+
+        controller.triangle().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.NORTH));
+        controller.circle().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.EAST));
+        controller.cross().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.SOUTH));
+        controller.square().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.WEST));
     }
 
     /**

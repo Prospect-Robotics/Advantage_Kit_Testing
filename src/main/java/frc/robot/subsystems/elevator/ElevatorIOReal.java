@@ -1,7 +1,6 @@
 package frc.robot.subsystems.elevator;
 
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Revolution;
+import static edu.wpi.first.units.Units.*;
 import static frc.robot.subsystems.elevator.ElevatorConstants.*;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -14,6 +13,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
+import org.littletonrobotics.junction.Logger;
 
 public class ElevatorIOReal implements ElevatorIO {
 
@@ -21,6 +21,8 @@ public class ElevatorIOReal implements ElevatorIO {
     private TalonFXConfiguration motorConfig;
 
     private final PositionVoltage positionControl = new PositionVoltage(0);
+
+    private Angle currentMotorSetpoint = Rotations.of(0);
 
     public ElevatorIOReal() {
         motor = new TalonFX(Constants.ELEVATOR_ID);
@@ -33,6 +35,10 @@ public class ElevatorIOReal implements ElevatorIO {
         slot0PIDConfig.kP = ELEVATOR_kP;
         slot0PIDConfig.kI = ELEVATOR_kI;
         slot0PIDConfig.kD = ELEVATOR_kD;
+        slot0PIDConfig.kS = ELEVATOR_kS;
+        slot0PIDConfig.kV = ELEVATOR_kV;
+        slot0PIDConfig.kA = ELEVATOR_kA;
+        slot0PIDConfig.kG = ELEVATOR_kG;
 
         // Config motor inversion.
         motorConfig.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
@@ -48,10 +54,13 @@ public class ElevatorIOReal implements ElevatorIO {
         inputs.motorVelocityRotsPerSecond = motor.getVelocity().getValueAsDouble();
         inputs.motorCurrent = motor.getStatorCurrent().getValueAsDouble();
         inputs.motorVoltage = motor.getMotorVoltage().getValueAsDouble();
+
+        Logger.recordOutput("Elevator/motor/Setpoint", currentMotorSetpoint);
     }
 
     @Override
     public void setMotorSetpoint(Angle setpoint) {
+        currentMotorSetpoint = setpoint;
         motor.setControl(positionControl.withPosition(setpoint));
     }
 

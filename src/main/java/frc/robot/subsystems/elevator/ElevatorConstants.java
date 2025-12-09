@@ -24,10 +24,10 @@ public class ElevatorConstants {
     public static final Distance ELEVATOR_MIN_HEIGHT = Inches.of(0.0);
     public static final Distance ELEVATOR_MAX_HEIGHT = Inches.of(56.0);
 
-    //  public static final double ELEVATOR_kG = 0.29;
-    //  public static final double ELEVATOR_kS = 0.11;
-    //  public static final double ELEVATOR_kV = 0.1;
-    //  public static final double ELEVATOR_kA = 0.0;
+    public static final double ELEVATOR_kG = 0.29;
+    public static final double ELEVATOR_kS = 0.11;
+    public static final double ELEVATOR_kV = 0.1;
+    public static final double ELEVATOR_kA = 0.0;
     public static final double ELEVATOR_kP = 0.4;
     public static final double ELEVATOR_kI = 0.0;
     public static final double ELEVATOR_kD = 0.0;

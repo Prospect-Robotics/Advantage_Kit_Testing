@@ -51,7 +51,7 @@ public class Elevator extends SubsystemBase {
     public enum ElevatorHeight {
         // Positions taken from offseason bot code, inturn taken from onshape.
         UP(Inches.of(56.0)),
-        MIDDLE(Inches.of(28)),
+        MIDDLE(Inches.of(28.0)),
         DOWN(Inches.of(0.0));
 
         public final Distance position;
@@ -66,8 +66,7 @@ public class Elevator extends SubsystemBase {
 
         public Angle getPositionAngle() {
             // NOTE: yes this code is bs, but i wanna see it work first.
-            return Rotations.of(
-                    getPosition().in(Inches) / (ElevatorConstants.ELEVATOR_HEIGHT_CHANGE_PER_MOTOR_ROTATION));
+            return Radians.of(getPosition().in(Inches) / (ElevatorConstants.ELEVATOR_HEIGHT_CHANGE_PER_MOTOR_ROTATION));
         }
     }
 }

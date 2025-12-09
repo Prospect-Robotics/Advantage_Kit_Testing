@@ -12,8 +12,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 
-import static frc.robot.subsystems.arm.ArmConstants.*;
-
 // TODO: Test this class on LePrawn, ensure the arm won't rotate more than once in any direction.
 public class ArmIOReal implements ArmIO {
 
@@ -97,5 +95,4 @@ public class ArmIOReal implements ArmIO {
     public void setIntakeMotorVoltage(Voltage voltage) {
         intakeMotor.setVoltage(voltage.magnitude());
     }
-
 }

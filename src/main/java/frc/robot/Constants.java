@@ -68,7 +68,7 @@ public final class Constants {
     // Mechanisms
 
     // Elevator
-    public static final int ELEVATOR_ID = 14;
+    public static final int ELEVATOR_ID = 23;
 
     // Arm
     public static final int ARM_PIVOT_ID = 15;

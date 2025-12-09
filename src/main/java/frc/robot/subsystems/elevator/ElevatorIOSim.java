@@ -39,6 +39,8 @@ public class ElevatorIOSim implements ElevatorIO {
     // Used for actually moving the motor to a given position with PID applied to a voltage input.
     private final PositionVoltage positionControl = new PositionVoltage(0);
 
+    private Angle currentMotorSetpoint = Rotations.of(0);
+
     public ElevatorIOSim() {
         motor = new TalonFX(Constants.ELEVATOR_ID);
         motor.setNeutralMode(NeutralModeValue.Brake);
@@ -78,6 +80,9 @@ public class ElevatorIOSim implements ElevatorIO {
 
         // Logs to "Real Outputs" NT
         Logger.recordOutput("Simulated Elevator/motorSim/Voltage", motorSim.getMotorVoltage());
+        Logger.recordOutput("Simulated Elevator/motor/Setpoint", currentMotorSetpoint);
+        Logger.recordOutput("Simulated Elevator/elevatorSim/hitsUpperLimit", elevatorSim.hasHitUpperLimit());
+        Logger.recordOutput("Simulated Elevator/elevatorSim/hitsLowerLimit", elevatorSim.hasHitLowerLimit());
 
         elevatorSim.update(0.02); // Same update cycle as an actual robot, 20 ms.
 
@@ -93,6 +98,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
     @Override
     public void setMotorSetpoint(Angle setpoint) {
+        currentMotorSetpoint = setpoint;
         motor.setControl(positionControl.withPosition(setpoint));
     }
 
