@@ -16,10 +16,11 @@ public class ElevatorConstants {
 
     // Correct calculation for Inches of travel per 1 Motor Rotation:
     // (2 * pi * Spool Radius) / Gearing
+    // NOTE to daniel: Will need to recalculate this with the new ELEVATOR_SPOOL_RADIUS
     public static final double ELEVATOR_HEIGHT_CHANGE_PER_MOTOR_ROTATION = 0.349727;
 
     // Guess what, I asked design again.
-    public static final Distance ELEVATOR_SPOOL_RADIUS = Inches.of(0.449);
+    public static final Distance ELEVATOR_SPOOL_RADIUS = Inches.of(0.8755);
 
     public static final Distance ELEVATOR_MIN_HEIGHT = Inches.of(0.0);
     public static final Distance ELEVATOR_MAX_HEIGHT = Inches.of(56.0);
