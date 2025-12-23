@@ -113,6 +113,9 @@ public class ElevatorIOSim implements ElevatorIO {
         return motor.getPosition().getValue();
     }
 
+    /**
+     * @return The height of the first stage of the elevator.
+     */
     @Override
     public Distance getCarriagePosition() {
         return Meters.of(elevatorSim.getPositionMeters());

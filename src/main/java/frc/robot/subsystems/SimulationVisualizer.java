@@ -53,16 +53,16 @@ public class SimulationVisualizer {
             new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0)),
 
             // Elevator 1st stage.
-            new Pose3d(0, 0, elevatorHeight.times(.5).in(Meters), new Rotation3d(0, 0, 0)),
-
-            // Elevator 2nd stage (carriage).
             new Pose3d(0, 0, elevatorHeight.in(Meters), new Rotation3d(0, 0, 0)),
 
-            // Arm
+            // Elevator 2nd stage (carriage) so it is multiplied by 2.
+            new Pose3d(0, 0, elevatorHeight.times(2).in(Meters), new Rotation3d(0, 0, 0)),
+
+            // Arm, attached to the second stage of the elevator.
             new Pose3d(
                     0,
                     -0.125,
-                    elevatorHeight.plus(Meters.of(0.37)).in(Meters),
+                    elevatorHeight.times(2).plus(Meters.of(0.37)).in(Meters),
                     new Rotation3d(0, armAngle.in(Radians), 0))
         });
 
@@ -78,8 +78,9 @@ public class SimulationVisualizer {
     // TODO: Do we need to get the length/angle of the Mech2d, or just set it to the input?
 
     public void updateElevatorHeight(Distance newHeight) {
-        elevatorLigament.setLength(newHeight.in(Inches));
-        elevatorHeight = Inches.of(elevatorLigament.getLength());
+        // The elevator height is of the second stage of the elevator, so double the given height.
+        elevatorLigament.setLength(newHeight.in(Inches) * 2);
+        elevatorHeight = newHeight;
     }
 
     public void updateArmRotation(Angle newRotation) {
