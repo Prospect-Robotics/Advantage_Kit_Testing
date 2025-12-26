@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public interface Controller {
     /** Top button on the face pad (not POV/DPAD). */
-    public Trigger faceTop(); 
+    public Trigger faceTop();
 
     public Trigger faceRight();
 
@@ -33,7 +33,7 @@ public interface Controller {
     public Trigger rightMenuButtons();
 
     /** joystick button */
-    public Trigger joystickLeftPress(); 
+    public Trigger joystickLeftPress();
 
     public Trigger joystickRightPress();
     /** joystick */
@@ -43,6 +43,5 @@ public interface Controller {
 
     public double rightXAxis();
 
-    public double rightYAxis(); 
-
-} 
+    public double rightYAxis();
+}
