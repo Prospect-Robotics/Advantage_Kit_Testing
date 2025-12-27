@@ -19,7 +19,7 @@ public class ArmIOReal implements ArmIO {
     TalonFX pivotMotor;
     TalonFXConfiguration pivotMotorConfig;
 
-    PositionVoltage pivotPositionControl = new PositionVoltage(0);
+    private PositionVoltage pivotPositionControl = new PositionVoltage(0);
 
     // Intake/Outtake motors & configurations
     TalonFX intakeMotor;

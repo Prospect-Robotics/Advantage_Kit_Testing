@@ -7,6 +7,8 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface GroundIntakePivotIO {
 
+    final double MOTOR_TO_GROUND_INTAKE_PIVOT = 66.0 / 14.0; // 14.0 / 66.0;
+
     @AutoLog
     class GroundIntakePivotIOInputs {
         public double groundIntakePivotAngleDegrees;
