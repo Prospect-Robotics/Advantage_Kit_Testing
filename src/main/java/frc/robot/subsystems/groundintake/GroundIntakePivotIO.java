@@ -2,12 +2,15 @@ package frc.robot.subsystems.groundintake;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface GroundIntakePivotIO {
 
     @AutoLog
     class GroundIntakePivotIOInputs {
+        public double groundIntakePivotAngleDegrees;
+
         public double pivotMotorRotations;
         public double pivotMotorVelocityRotsPerSecond;
         public double pivotMotorCurrent;
@@ -18,7 +21,7 @@ public interface GroundIntakePivotIO {
 
     default void setPivotMotorSetpoint(Angle setpoint) {}
 
-    default void setPivotMotorVoltage(double voltage) {}
+    default void setPivotMotorVoltage(Voltage voltage) {}
 
     default Angle getPivotMotorPosition() {
         return Units.Rotations.of(0);
@@ -27,6 +30,4 @@ public interface GroundIntakePivotIO {
     default Angle getGroundIntakePivotPosition() {
         return Units.Degrees.of(0);
     }
-
-
 }

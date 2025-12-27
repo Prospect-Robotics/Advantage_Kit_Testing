@@ -76,6 +76,4 @@ public final class Constants {
     public static final int ARM_ENCODER_ID = 24;
 
     public static final int GROUND_INTAKE_PIVOT_ID = 21;
-
 }
-
