@@ -20,10 +20,11 @@ public class ArmIOReal implements ArmIO {
     TalonFX pivotMotor;
     TalonFXConfiguration pivotMotorConfig;
 
+    PositionVoltage pivotPositionControl = new PositionVoltage(0);
+
     CANcoder armEncoder;
     CANcoderConfiguration armEncoderConfig;
 
-    PositionVoltage pivotPositionControl = new PositionVoltage(0);
 
     // Intake/Outtake motors & configurations
     TalonFX intakeMotor;
@@ -32,9 +33,12 @@ public class ArmIOReal implements ArmIO {
     public ArmIOReal() {
         // Set up the arm encoder (records the arm position)
         armEncoder = new CANcoder(ARM_ENCODER_ID);
+
         armEncoderConfig = new CANcoderConfiguration();
         armEncoderConfig.withMagnetSensor(
                 new MagnetSensorConfigs().withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
+
+        armEncoder.getConfigurator().apply(armEncoderConfig);
 
         // Set up arm pivot motor.
         pivotMotor = new TalonFX(ARM_PIVOT_ID);
