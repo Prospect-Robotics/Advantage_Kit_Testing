@@ -110,7 +110,8 @@ public class ArmIOSim implements ArmIO {
         intakeMotorSimState.setSupplyVoltage(Volts.of(12));
         armEncoderSimState.setSupplyVoltage(Volts.of(12));
 
-        armEncoder.setPosition(Radians.of(armSim.getAngleRads()));
+        // negated because the arm and encoder are on opposite sides of the arm carriage.
+        armEncoderSimState.setRawPosition(Radians.of(armSim.getAngleRads()).unaryMinus());
 
         armSim.setInputVoltage(pivotMotorSimState.getMotorVoltage());
         armSim.update(0.02);

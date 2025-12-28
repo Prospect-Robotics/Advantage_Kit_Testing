@@ -23,7 +23,7 @@ public interface ArmIO {
         public double intakeMotorVelocityRotsPerSecond;
         public double intakeMotorVoltage;
 
-        // Encoder inputs
+        // Encoder inputs, should be the same as the arm position.
         public double encoderPositionDegrees;
     }
 

@@ -16,8 +16,6 @@ public class Arm extends SubsystemBase {
     private final ArmIO io;
     private final ArmIOInputsAutoLogged replayedInputs = new ArmIOInputsAutoLogged();
 
-    private ArmPositions currentArmPosition = ArmPositions.NORTH;
-
     public Arm(ArmIO io) {
         this.io = io;
     }
