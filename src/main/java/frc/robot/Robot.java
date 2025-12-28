@@ -16,12 +16,8 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.controller.Controller;
-import frc.robot.controller.PS4Controller;
-import frc.robot.controller.XboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.SimulationVisualizer;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -40,65 +36,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
     private Command autonomousCommand;
     private RobotContainer robotContainer;
-
-    /** Initializes a 2813 {@link Controller} on the given port; auto detects the controller type.
-     *
-     * <p>This method initializes a generic 2813 Controller by auto detecting the type of controller plugged on {@code port}.
-     *
-     * <p>This method requires that the driver station is attached or returns an {@link IllegalStateException} exception.
-     *
-     * @param port Joystick port to connect controller to.
-     * @throws IllegalStateException if DriverStation is not attached yet. This is a retryable error.
-     * @throws InternalError if DriverStation is already attached but detects empty/invalid controller at specified port.
-     */
-    private Controller createControllerWithTypeAutoDetect(int port) {
-        String name = DriverStation.getJoystickName(port);
-
-        if (!DriverStation.isDSAttached()) {
-            throw new IllegalStateException("DriverStation not yet attached.");
-        }
-
-        Controller controller = null;
-        if (name.contains("Xbox")) {
-            name = "XBox";
-            controller = new XboxController(port);
-        } else if (name.contains("PS4") || name.contains("Wireless Controller")) {
-            name = "PS4";
-            controller = new PS4Controller(port);
-        } else {
-            throw new InternalError("Unsupported joystick type: [" + name + "]");
-        }
-        Logger.recordOutput("Controllers/" + port, name + " controller detected");
-        return controller;
-    }
-
-    /**
-     * Configures robot bindings once.
-     *
-     * <p>This function configures robot button bindings the first time
-     * createControllerWithTypeAutoDetect can auto-detect a valid controller
-     * port 0.  It just passes after that.
-     *
-     * <p>The function prints DriverStation error if the driver station is ready
-     * but it cannot detect a valid joystick connected at port 0.
-     */
-    void configureBindingsOnce() {
-        if (robotContainer.getBindingsInitialized()) return;
-
-        try {
-            Controller controller = createControllerWithTypeAutoDetect(0);
-            robotContainer.configureButtonBindings(controller);
-        } catch (IllegalStateException e) {
-            // createControllerWithTypeAutoDetect throws this exception when
-            // DriverStation is not ready yet. Ignore it and continue retrying
-            // in the next periodic.
-        } catch (InternalError e) {
-            // createControllerWithTypeAutoDetect throws this error when there's
-            // no joystick connected at all, or it cannot recognize it's type.
-            boolean dontPrintStackTrace = false;
-            DriverStation.reportError("Joistick[0] detection error: " + e, dontPrintStackTrace);
-        }
-    }
 
     public Robot() {
         // Record metadata
@@ -164,7 +101,13 @@ public class Robot extends LoggedRobot {
     /** This function is called periodically during all modes. */
     @Override
     public void robotPeriodic() {
-        configureBindingsOnce();
+        // This call will try to late-initialize controller bindings and once it succeeds
+        // it becomes a no-op after that.
+        // The reason we should keep retrying it in robotPeriodic is that this operation
+        // succeeds only after DriverStation goes live and only after a controller is
+        // connected to it. It will print warnings or errors in the DriverStation / logs
+        // before that.
+        robotContainer.configureBindingsOnce();
 
         // Optionally switch the thread to high priority to improve loop
         // timing (see the template project documentation for details)
