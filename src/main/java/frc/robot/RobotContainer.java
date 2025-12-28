@@ -35,6 +35,11 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOReal;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
+import frc.robot.subsystems.groundintake.GroundIntake;
+import frc.robot.subsystems.groundintake.GroundIntakeIO;
+import frc.robot.subsystems.groundintake.GroundIntakeIOReal;
+import frc.robot.subsystems.groundintake.GroundIntakeIOSim;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -48,6 +53,7 @@ public class RobotContainer {
     private final Drive drive;
     private final Elevator elevator;
     private final Arm arm;
+    private final GroundIntake groundIntake;
 
     // Controller
     private final CommandXboxController controller = new CommandXboxController(0);
@@ -71,6 +77,8 @@ public class RobotContainer {
 
                 arm = new Arm(new ArmIOReal());
 
+                groundIntake = new GroundIntake(new GroundIntakeIOReal()); 
+                    
                 break;
 
             case SIM:
@@ -85,6 +93,8 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIOSim());
 
                 arm = new Arm(new ArmIOSim());
+
+                groundIntake = new GroundIntake(new GroundIntakeIOSim());
 
                 break;
 
