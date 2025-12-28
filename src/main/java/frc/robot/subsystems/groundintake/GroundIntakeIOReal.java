@@ -7,14 +7,14 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 
-public class GroundIntakePivotIOReal implements GroundIntakePivotIO {
+public class GroundIntakeIOReal implements GroundIntakeIO {
 
     TalonFX groundIntakePivotMotor;
     TalonFXConfiguration groundIntakeMotorPivotConfig;
 
     private PositionVoltage positionVoltage = new PositionVoltage(0);
 
-    public GroundIntakePivotIOReal() {
+    public GroundIntakeIOReal() {
 
         groundIntakePivotMotor = new TalonFX(Constants.GROUND_INTAKE_PIVOT_ID);
     }

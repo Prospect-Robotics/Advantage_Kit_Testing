@@ -17,17 +17,17 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.Constants;
 import org.littletonrobotics.junction.Logger;
 
-public class GroundIntakePivotIOSim implements GroundIntakePivotIO {
+public class GroundIntakeIOSim implements GroundIntakeIO {
 
     private final SingleJointedArmSim groundIntakePivotSim = new SingleJointedArmSim(
             DCMotor.getKrakenX60(1),
-            GroundIntakePivotConstants.MOTOR_TO_PIVOT_GEARING,
+            GroundIntakeConstants.MOTOR_TO_PIVOT_GEARING,
             SingleJointedArmSim.estimateMOI(
-                    GroundIntakePivotConstants.GROUND_INTAKE_LENGTH.in(Units.Meters),
-                    GroundIntakePivotConstants.GROUND_INTAKE_WEIGHT.in(Units.Kilograms)),
-            GroundIntakePivotConstants.GROUND_INTAKE_LENGTH.in(Units.Meters),
-            GroundIntakePivotConstants.MIN_PIVOT_ANGLE.in(Radians),
-            GroundIntakePivotConstants.MAX_PIVOT_ANGLE.in(Radians),
+                    GroundIntakeConstants.GROUND_INTAKE_LENGTH.in(Units.Meters),
+                    GroundIntakeConstants.GROUND_INTAKE_WEIGHT.in(Units.Kilograms)),
+            GroundIntakeConstants.GROUND_INTAKE_LENGTH.in(Units.Meters),
+            GroundIntakeConstants.MIN_PIVOT_ANGLE.in(Radians),
+            GroundIntakeConstants.MAX_PIVOT_ANGLE.in(Radians),
             true,
             Units.Degrees.of(0).in(Radians));
 
@@ -37,16 +37,16 @@ public class GroundIntakePivotIOSim implements GroundIntakePivotIO {
 
     PositionVoltage pivotPositionControl = new PositionVoltage(0);
 
-    public GroundIntakePivotIOSim() {
+    public GroundIntakeIOSim() {
         pivotMotor = new TalonFX(Constants.GROUND_INTAKE_PIVOT_ID);
         pivotMotorSimState = pivotMotor.getSimState();
 
         pivotMotorConfig = new TalonFXConfiguration();
 
         pivotMotorConfig.withSlot0(new Slot0Configs()
-                .withKP(GroundIntakePivotConstants.kP_PIVOT)
-                .withKI(GroundIntakePivotConstants.kI_PIVOT)
-                .withKD(GroundIntakePivotConstants.kD_PIVOT));
+                .withKP(GroundIntakeConstants.kP_PIVOT)
+                .withKI(GroundIntakeConstants.kI_PIVOT)
+                .withKD(GroundIntakeConstants.kD_PIVOT));
 
         pivotMotorConfig.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
 
@@ -76,10 +76,10 @@ public class GroundIntakePivotIOSim implements GroundIntakePivotIO {
 
         pivotMotorSimState.setRawRotorPosition(
                 edu.wpi.first.math.util.Units.radiansToRotations(groundIntakePivotSim.getAngleRads())
-                        * GroundIntakePivotConstants.MOTOR_TO_PIVOT_GEARING);
+                        * GroundIntakeConstants.MOTOR_TO_PIVOT_GEARING);
         pivotMotorSimState.setRotorVelocity(groundIntakePivotSim.getVelocityRadPerSec()
                 / (2.0 * Math.PI)
-                * GroundIntakePivotConstants.MOTOR_TO_PIVOT_GEARING);
+                * GroundIntakeConstants.MOTOR_TO_PIVOT_GEARING);
     }
 
     @Override

@@ -5,9 +5,9 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface GroundIntakePivotIO {
+public interface GroundIntakeIO {
 
-    final double MOTOR_TO_GROUND_INTAKE_PIVOT = 66.0 / 14.0; // 14.0 / 66.0;
+    double MOTOR_TO_GROUND_INTAKE_PIVOT = 66.0 / 14.0; // 14.0 / 66.0;
 
     @AutoLog
     class GroundIntakePivotIOInputs {

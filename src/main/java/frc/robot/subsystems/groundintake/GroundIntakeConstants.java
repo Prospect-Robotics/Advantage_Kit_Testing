@@ -5,7 +5,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 
-public class GroundIntakePivotConstants {
+public class GroundIntakeConstants {
     public static final Angle PIVOT_UP_POSITION = Units.Rotations.of(0.15869140625);
     public static final Angle PIVOT_DOWN_POSITION = Units.Rotations.of(-15.623046875);
     public static final double ACCEPTABLE_ERROR = 0.1;
