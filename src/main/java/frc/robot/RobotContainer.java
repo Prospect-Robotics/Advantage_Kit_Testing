@@ -14,12 +14,14 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.controller.Controller;
 import frc.robot.controller.PS4Controller;
+import frc.robot.controller.XboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
@@ -35,6 +37,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOReal;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -49,14 +52,84 @@ public class RobotContainer {
     private final Elevator elevator;
     private final Arm arm;
 
-    // Controller
-    private final Controller controller = new PS4Controller(0);
-
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
 
+    // Keeps track if the controller bindings have been initialized.
+    private boolean bindingsInitialized = false;
+
+    /** Initializes a 2813 {@link Controller} on the given port; auto detects the controller type.
+     *
+     * <p>This method initializes a generic 2813 Controller by auto detecting the type of controller plugged on {@code port}.
+     *
+     * <p>This method requires that the driver station is attached or returns an {@link IllegalStateException} exception.
+     *
+     * @param port Joystick port to connect controller to.
+     * @throws IllegalStateException if DriverStation is not attached yet. This is a retryable error.
+     * @throws InternalError if DriverStation is already attached but detects empty/invalid controller at specified port.
+     */
+    private static Controller createControllerWithTypeAutoDetect(int port) {
+        if (!DriverStation.isDSAttached()) {
+            throw new IllegalStateException("DriverStation not yet attached.");
+        }
+
+        Controller controller = null;
+        String name = DriverStation.getJoystickName(port);
+        if (name.contains("Xbox")) {
+            name = "XBox";
+            controller = new XboxController(port);
+        } else if (name.contains("PS4") || name.contains("Wireless Controller")) {
+            name = "PS4";
+            controller = new PS4Controller(port);
+        } else if (name.contains("Keyboard") && RobotBase.isSimulation()) {
+            // Support the emulated Keyboard X controllers in simulation mode.
+            // Map them to XBox controllers.
+            // It's up to the user to configure the right number of buttons for them
+            // (see
+            // https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-simulation/simulation-gui.html#using-the-keyboard-as-a-joystick).
+
+            // Keep `name` as is.
+            controller = new XboxController(port);
+        } else {
+            throw new InternalError("Unsupported joystick type: [" + name + "]");
+        }
+        Logger.recordOutput("Controllers/" + port, name + " controller detected");
+        return controller;
+    }
+
+    /**
+     * Configures robot bindings once.
+     *
+     * <p>This function configures robot button bindings the first time
+     * createControllerWithTypeAutoDetect can auto-detect a valid controller
+     * port 0.  It just passes after that.
+     *
+     * <p>The function prints DriverStation error if the driver station is ready
+     * but it cannot detect a valid joystick connected at port 0.
+     */
+    public void configureBindingsOnce() {
+        if (bindingsInitialized) return;
+
+        boolean dontPrintStackTrace = false;
+        try {
+            Controller controller = createControllerWithTypeAutoDetect(0);
+            configureButtonBindings(controller);
+            bindingsInitialized = true;
+        } catch (IllegalStateException e) {
+            // createControllerWithTypeAutoDetect throws this exception when
+            // DriverStation is not ready yet. Ignore it and continue retrying
+            // in the next periodic.
+            DriverStation.reportWarning(e.getMessage(), dontPrintStackTrace);
+        } catch (InternalError e) {
+            // createControllerWithTypeAutoDetect throws this error when there's
+            // no joystick connected at all, or it cannot recognize it's type.
+            DriverStation.reportError("Joistick[0] detection error: " + e, dontPrintStackTrace);
+        }
+    }
+
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
+        // controller = getController(0);
         switch (Constants.currentMode) {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
@@ -112,18 +185,13 @@ public class RobotContainer {
                 "Drive SysId (Quasistatic Reverse)", drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         autoChooser.addOption("Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
         autoChooser.addOption("Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-        // Configure the button bindings
-        configureButtonBindings();
     }
 
     /**
      * Use this method to define your button->command mappings. Buttons can be created by
-     * instantiating a {@link GenericHID} or one of its subclasses ({@link
-     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+     * instantiating a 2813's {@link Controller} subclasses.
      */
-    private void configureButtonBindings() {
+    private void configureButtonBindings(Controller controller) {
         // Default command, normal field-relative drive.
         // Xbox controller that I got is busted or something, the getRightY() binds to a trigger for some reason.
         drive.setDefaultCommand(DriveCommands.joystickDrive(
