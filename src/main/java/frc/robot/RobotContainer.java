@@ -36,10 +36,8 @@ import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOReal;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.groundintake.GroundIntake;
-import frc.robot.subsystems.groundintake.GroundIntakeIO;
 import frc.robot.subsystems.groundintake.GroundIntakeIOReal;
 import frc.robot.subsystems.groundintake.GroundIntakeIOSim;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -77,8 +75,8 @@ public class RobotContainer {
 
                 arm = new Arm(new ArmIOReal());
 
-                groundIntake = new GroundIntake(new GroundIntakeIOReal()); 
-                    
+                groundIntake = new GroundIntake(new GroundIntakeIOReal());
+
                 break;
 
             case SIM:
