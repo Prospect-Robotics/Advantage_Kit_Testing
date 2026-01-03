@@ -2,13 +2,8 @@ package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
@@ -16,7 +11,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import frc.robot.Constants;
 import org.littletonrobotics.junction.Logger;
 
 public class ElevatorIOSim implements ElevatorIO {
@@ -35,33 +29,16 @@ public class ElevatorIOSim implements ElevatorIO {
     // TODO(vdikov): Looks like IOReal and IOSim could share the motor instance.
     private TalonFX motor;
     private TalonFXSimState motorSim;
-    // TODO(vdikov): Ideally, IOSim and IOReal work off the same motorConfig
-    // (though PID values might have to be kept separately)
-    private TalonFXConfiguration motorConfig;
 
     // Used for actually moving the motor to a given position with PID applied to a voltage input.
     private final PositionVoltage positionControl = new PositionVoltage(0);
 
-    // TODO(vdikov): This shold definitely move to Elevator.
-    private Angle currentMotorSetpoint = Rotations.of(0);
+    public ElevatorIOSim() {}
 
-    public ElevatorIOSim() {
-        motor = new TalonFX(Constants.ELEVATOR_ID);
-        motor.setNeutralMode(NeutralModeValue.Brake);
-
-        motorSim = motor.getSimState();
-
-        motorConfig = new TalonFXConfiguration();
-
-        motorConfig.withSlot0(new Slot0Configs()
-                .withKP(ElevatorConstants.ELEVATOR_kP)
-                .withKI(ElevatorConstants.ELEVATOR_kI)
-                .withKD(ElevatorConstants.ELEVATOR_kD));
-
-        // This needs to be CounterClockwise, else sim won't work propper, though it is clockwise on the bot.
-        motorConfig.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
-
-        motor.getConfigurator().apply(motorConfig);
+    @Override
+    public void setMotor(TalonFX motor) {
+        this.motorSim = motor.getSimState();
+        this.motor = motor;
     }
 
     @Override
@@ -84,8 +61,6 @@ public class ElevatorIOSim implements ElevatorIO {
 
         // Logs to "Real Outputs" NT
         Logger.recordOutput("Simulated Elevator/motorSim/Voltage", motorSim.getMotorVoltage());
-        // Explicitly stating the unit prevents confusion when looking at the value in adv. scope.
-        Logger.recordOutput("Simulated Elevator/motor/SetpointRotations", currentMotorSetpoint.in(Rotations));
         Logger.recordOutput("Simulated Elevator/elevatorSim/hitsUpperLimit", elevatorSim.hasHitUpperLimit());
         Logger.recordOutput("Simulated Elevator/elevatorSim/hitsLowerLimit", elevatorSim.hasHitLowerLimit());
 
@@ -103,7 +78,6 @@ public class ElevatorIOSim implements ElevatorIO {
 
     @Override
     public void setMotorSetpoint(Angle setpoint) {
-        currentMotorSetpoint = setpoint;
         motor.setControl(positionControl.withPosition(setpoint));
     }
 

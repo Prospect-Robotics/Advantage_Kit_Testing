@@ -3,6 +3,7 @@ package frc.robot.subsystems.elevator;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
@@ -13,6 +14,7 @@ public interface ElevatorIO {
     @AutoLog
     class ElevatorIOInputs {
         public double carriagePositionInches = 0.0;
+        // public double motorSetpointRotations = 0.0;
         public double motorRotations = 0.0;
         public double motorVelocityRotsPerSecond = 0.0;
         public double motorCurrent = 0.0;
@@ -20,7 +22,12 @@ public interface ElevatorIO {
     }
 
     /**
-     * Used to update Advantage kit autologged input data, as well as any other necessary states (like in sim)
+     * Sets the TalonFX motor configuraiton in the IO implementation.
+     */
+    default void setMotor(TalonFX motor) {}
+
+    /**
+     * Updates Advantage kit autologged input data, as well as any other necessary states (like in sim)
      * @param inputs The "struct" (data class) to handle hardware inputs.
      */
     default void updateState(ElevatorIOInputs inputs) {}
