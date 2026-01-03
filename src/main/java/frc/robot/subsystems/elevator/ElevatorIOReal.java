@@ -17,11 +17,15 @@ import org.littletonrobotics.junction.Logger;
 
 public class ElevatorIOReal implements ElevatorIO {
 
+    // TODO(vdikov): Looks like IOReal and IOSim could share the motor instance.
     private TalonFX motor;
+    // TODO(vdikov): Ideally, IOSim and IOReal work off the same motorConfig
+    // (though PID values might have to be kept separately)
     private TalonFXConfiguration motorConfig;
 
     private final PositionVoltage positionControl = new PositionVoltage(0);
 
+    // TODO(vdikov): this definitely should be moved to Elevator.
     private Angle currentMotorSetpoint = Rotations.of(0);
 
     public ElevatorIOReal() {
@@ -42,6 +46,23 @@ public class ElevatorIOReal implements ElevatorIO {
 
         // Config motor inversion.
         motorConfig.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+
+        // TODO(vdikov): Discuss with Stefan if we should adopt this as a more
+        // self-contained way to configure the motor.
+        // motorConfig = new TalonFXConfiguration()
+        //         .withSlot0(
+        //                 new Slot0Configs() // Motor PID and gain values.
+        //                         .withKP(ELEVATOR_kP)
+        //                         .withKI(ELEVATOR_kI)
+        //                         .withKD(ELEVATOR_kD)
+        //                         .withKS(ELEVATOR_kS)
+        //                         .withKV(ELEVATOR_kV)
+        //                         .withKA(ELEVATOR_kA)
+        //                         .withKG(ELEVATOR_kG))
+        //         .withMotorOutput(
+        //                 new MotorOutputConfigs()
+        //                         .withInverted(InvertedValue.Clockwise_Positive) // Invert motor rotation.
+        //                 );
 
         motor.getConfigurator().apply(motorConfig);
     }

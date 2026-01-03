@@ -32,13 +32,17 @@ public class ElevatorIOSim implements ElevatorIO {
             true,
             0.00);
 
+    // TODO(vdikov): Looks like IOReal and IOSim could share the motor instance.
     private TalonFX motor;
     private TalonFXSimState motorSim;
+    // TODO(vdikov): Ideally, IOSim and IOReal work off the same motorConfig
+    // (though PID values might have to be kept separately)
     private TalonFXConfiguration motorConfig;
 
     // Used for actually moving the motor to a given position with PID applied to a voltage input.
     private final PositionVoltage positionControl = new PositionVoltage(0);
 
+    // TODO(vdikov): This shold definitely move to Elevator.
     private Angle currentMotorSetpoint = Rotations.of(0);
 
     public ElevatorIOSim() {
