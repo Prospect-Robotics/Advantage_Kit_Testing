@@ -1,6 +1,8 @@
 package frc.robot.subsystems.elevator;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
@@ -33,7 +35,9 @@ public class Elevator extends SubsystemBase {
     @Override
     public void periodic() {
         io.updateState(replayedInputs);
-        // Must be called every periodic after updating hardware state.
+        // `processInputs` must be called every periodic after updating hardware state.
+        // In `REPLAY` mode, `updateState` does nothing, and the `replayedInputs` are populated from the replayed logs
+        // instead.
         Logger.processInputs("Elevator", replayedInputs);
         Logger.recordOutput(
                 "Elevator/Desired Carriage Position",
@@ -42,7 +46,7 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void simulationPeriodic() {
-        SimulationVisualizer.getInstance().updateElevatorHeight(io.getCarriagePosition());
+        SimulationVisualizer.getInstance().updateElevatorHeight(Inches.of(replayedInputs.carriagePositionInches));
     }
 
     public void setElevatorPosition(ElevatorHeight height) {

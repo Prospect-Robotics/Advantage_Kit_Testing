@@ -23,12 +23,15 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
         io.updateState(replayedInputs);
+        // `processInputs` must be called every periodic after updating hardware state.
+        // In `REPLAY` mode, `updateState` does nothing, and the `replayedInputs` are populated from the replayed logs
+        // instead.
         Logger.processInputs("Arm", replayedInputs);
     }
 
     @Override
     public void simulationPeriodic() {
-        SimulationVisualizer.getInstance().updateArmRotation(io.getArmPosition());
+        SimulationVisualizer.getInstance().updateArmRotation(Degrees.of(replayedInputs.armPositionDegrees));
     }
 
     public void setArmPosition(ArmPositions armPosition) {
