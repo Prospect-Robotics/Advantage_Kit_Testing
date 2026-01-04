@@ -24,14 +24,13 @@ public class ElevatorIOSim implements ElevatorIO {
             ElevatorConstants.ELEVATOR_MIN_HEIGHT.in(Meter),
             ElevatorConstants.ELEVATOR_MAX_HEIGHT.in(Meter),
             true,
-            0.00);
+            ElevatorConstants.ELEVATOR_MIN_HEIGHT.in(Meter));
 
-    // TODO(vdikov): Looks like IOReal and IOSim could share the motor instance.
     private TalonFX motor;
     private TalonFXSimState motorSim;
 
     // Used for actually moving the motor to a given position with PID applied to a voltage input.
-    private final PositionVoltage positionControl = new PositionVoltage(0);
+    private final PositionVoltage positionControl = new PositionVoltage(Rotations.of(0));
 
     public ElevatorIOSim() {}
 
@@ -55,25 +54,28 @@ public class ElevatorIOSim implements ElevatorIO {
 
     private void updateSim() {
         motorSim.setSupplyVoltage(Volts.of(12));
+        double motorInverted = -1.0; // -1 for inverted, 1 for forward motor.
 
         // Apply the voltage to the sim elevator that we apply to the sim motor.
-        elevatorSim.setInputVoltage(motorSim.getMotorVoltage());
+        // Negating the sim motor value since it is set to use negative value when pushing
+        // the cartrage UP.
+        elevatorSim.setInputVoltage(motorInverted * motorSim.getMotorVoltage());
+        elevatorSim.update(0.02); // Same update cycle as an actual robot, 20 ms.
 
         // Logs to "Real Outputs" NT
         Logger.recordOutput("Simulated Elevator/motorSim/Voltage", motorSim.getMotorVoltage());
+        Logger.recordOutput("Simulated Elevator/elevatorSim/position (meters)", elevatorSim.getPositionMeters());
         Logger.recordOutput("Simulated Elevator/elevatorSim/hitsUpperLimit", elevatorSim.hasHitUpperLimit());
         Logger.recordOutput("Simulated Elevator/elevatorSim/hitsLowerLimit", elevatorSim.hasHitLowerLimit());
 
-        elevatorSim.update(0.02); // Same update cycle as an actual robot, 20 ms.
-
-        motorSim.setRawRotorPosition(getMotorRotations(elevatorSim.getPositionMeters()));
+        motorSim.setRawRotorPosition(motorInverted * getMotorRotations(elevatorSim.getPositionMeters()));
 
         // angular velocity = linear velocity / radius, taken also from 5414
-        motorSim.setRotorVelocity(
-                ((elevatorSim.getVelocityMetersPerSecond() / ElevatorConstants.ELEVATOR_SPOOL_RADIUS.in(Meters))
-                                // radians/sec to rotations/sec
-                                / (2.0 * Math.PI))
-                        * ElevatorConstants.MOTOR_TO_ELEVATOR_GEARING);
+        motorSim.setRotorVelocity(motorInverted
+                * ((elevatorSim.getVelocityMetersPerSecond() / ElevatorConstants.ELEVATOR_SPOOL_RADIUS.in(Meters))
+                        // radians/sec to rotations/sec
+                        / (2.0 * Math.PI))
+                * ElevatorConstants.MOTOR_TO_ELEVATOR_GEARING);
     }
 
     @Override

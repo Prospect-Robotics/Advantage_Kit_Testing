@@ -32,20 +32,19 @@ public class Elevator extends SubsystemBase {
      * @param io The hardware implementation for the elevator, either sim or real.
      */
     public Elevator(ElevatorIO io) {
+        var slot0Config = new Slot0Configs() // Motor PID and gain values.
+                .withKP(ElevatorConstants.ELEVATOR_kP)
+                .withKI(ElevatorConstants.ELEVATOR_kI)
+                .withKD(ElevatorConstants.ELEVATOR_kD)
+                .withKS(ElevatorConstants.ELEVATOR_kS)
+                .withKV(ElevatorConstants.ELEVATOR_kV)
+                .withKA(ElevatorConstants.ELEVATOR_kA)
+                .withKG(ElevatorConstants.ELEVATOR_kG);
         var motorConfig = new TalonFXConfiguration()
-                .withSlot0(
-                        new Slot0Configs() // Motor PID and gain values.
-                                .withKP(ElevatorConstants.ELEVATOR_kP)
-                                .withKI(ElevatorConstants.ELEVATOR_kI)
-                                .withKD(ElevatorConstants.ELEVATOR_kD)
-                                .withKS(ElevatorConstants.ELEVATOR_kS)
-                                .withKV(ElevatorConstants.ELEVATOR_kV)
-                                .withKA(ElevatorConstants.ELEVATOR_kA)
-                                .withKG(ElevatorConstants.ELEVATOR_kG))
-                .withMotorOutput(
-                        new MotorOutputConfigs()
-                                .withInverted(InvertedValue.Clockwise_Positive) // Invert motor rotation.
-                        );
+                .withSlot0(slot0Config)
+                // .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
+                // Invert motor rotation.
+                .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
         var motor = new TalonFX(Constants.ELEVATOR_ID);
         motor.setNeutralMode(NeutralModeValue.Brake);
         motor.getConfigurator().apply(motorConfig);
