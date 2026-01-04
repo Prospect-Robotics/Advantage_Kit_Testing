@@ -4,11 +4,18 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.SimulationVisualizer;
 import org.littletonrobotics.junction.Logger;
 
@@ -25,6 +32,24 @@ public class Elevator extends SubsystemBase {
      * @param io The hardware implementation for the elevator, either sim or real.
      */
     public Elevator(ElevatorIO io) {
+        var slot0Config = new Slot0Configs() // Motor PID and gain values.
+                .withKP(ElevatorConstants.ELEVATOR_kP)
+                .withKI(ElevatorConstants.ELEVATOR_kI)
+                .withKD(ElevatorConstants.ELEVATOR_kD)
+                .withKS(ElevatorConstants.ELEVATOR_kS)
+                .withKV(ElevatorConstants.ELEVATOR_kV)
+                .withKA(ElevatorConstants.ELEVATOR_kA)
+                .withKG(ElevatorConstants.ELEVATOR_kG);
+        var motorConfig = new TalonFXConfiguration()
+                .withSlot0(slot0Config)
+                // .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
+                // Invert motor rotation.
+                .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+        var motor = new TalonFX(Constants.ELEVATOR_ID);
+        motor.setNeutralMode(NeutralModeValue.Brake);
+        motor.getConfigurator().apply(motorConfig);
+
+        io.setMotor(motor);
         this.io = io;
     }
 
@@ -40,8 +65,11 @@ public class Elevator extends SubsystemBase {
         // instead.
         Logger.processInputs("Elevator", replayedInputs);
         Logger.recordOutput(
-                "Elevator/Desired Carriage Position",
+                "Elevator/Carriage Setpoint (inches)",
                 currentElevatorSetpoint.getPosition().in(Inches));
+        Logger.recordOutput(
+                "Elevator/Motor Setpoint (rotations)",
+                currentElevatorSetpoint.getPositionAngle().in(Rotations));
     }
 
     @Override
@@ -49,9 +77,9 @@ public class Elevator extends SubsystemBase {
         SimulationVisualizer.getInstance().updateElevatorHeight(Inches.of(replayedInputs.carriagePositionInches));
     }
 
-    public void setElevatorPosition(ElevatorHeight height) {
-        currentElevatorSetpoint = height;
-        io.setMotorSetpoint(height.getPositionAngle());
+    public void setElevatorPosition(ElevatorHeight heightSetpoint) {
+        currentElevatorSetpoint = heightSetpoint;
+        io.setMotorSetpoint(heightSetpoint.getPositionAngle());
     }
 
     public Command setElevatorPositionCommand(ElevatorHeight height) {
