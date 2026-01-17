@@ -15,11 +15,11 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.controller.Controller;
+import frc.robot.controller.PS4Controller;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
@@ -50,7 +50,7 @@ public class RobotContainer {
     private final Arm arm;
 
     // Controller
-    private final CommandXboxController controller = new CommandXboxController(0);
+    private final Controller controller = new PS4Controller(0);
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
@@ -127,7 +127,7 @@ public class RobotContainer {
         // Default command, normal field-relative drive.
         // Xbox controller that I got is busted or something, the getRightY() binds to a trigger for some reason.
         drive.setDefaultCommand(DriveCommands.joystickDrive(
-                drive, () -> -controller.getLeftY(), () -> -controller.getLeftX(), () -> controller.getRightX()));
+                drive, () -> -controller.leftYAxis(), () -> -controller.leftXAxis(), () -> controller.rightXAxis()));
 
         // TODO: Enable later
         // Lock to 0° when A button is held
@@ -158,10 +158,10 @@ public class RobotContainer {
         //        controller.a().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.SOUTH));
         //        controller.x().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.WEST));
 
-        controller.y().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.NORTH));
-        controller.b().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.EAST));
-        controller.a().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.SOUTH));
-        controller.x().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.WEST));
+        controller.faceTop().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.NORTH));
+        controller.faceRight().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.EAST));
+        controller.faceDown().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.SOUTH));
+        controller.faceLeft().onTrue(arm.setArmPositionCommand(Arm.ArmPositions.WEST));
     }
 
     /**
